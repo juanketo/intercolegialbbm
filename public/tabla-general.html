@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabla General</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #00FF00;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2vh 4vw;
+      gap: 2vh;
+    }
+
+    /* ── TÍTULO ── */
+    #titulo {
+      width: 100%;
+      text-align: center;
+      font-size: 2.4vw;
+      font-weight: 900;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 0.3vw;
+      margin-bottom: 1vh;
+    }
+
+    /* ── ENCABEZADOS ── */
+    .fila-header {
+      display: grid;
+      grid-template-columns: 1fr 18% 12%;
+      width: 100%;
+      gap: 2vw;
+      margin-bottom: 1vh;
+    }
+
+    .col-header {
+      text-align: center;
+      font-size: 2.4vw;
+      font-weight: 900;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 0.15vw;
+    }
+
+    /* ── LISTA ── */
+    #lista {
+      display: flex;
+      flex-direction: column;
+      gap: 7vh;
+      width: 100%;
+    }
+
+    .fila-dato {
+      display: grid;
+      grid-template-columns: 1fr 18% 12%;
+      gap: 2vw;
+      align-items: center;
+    }
+
+    /* nombre: unidad — disciplina — nombre_grupo */
+    .cel-nombre {
+      font-size: 2.9vw;
+      font-weight: 900;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.3vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* promedio */
+    .cel-promedio {
+      text-align: center;
+      font-size: 5vw;
+      font-weight: 900;
+      color: #000;
+      line-height: 1;
+    }
+
+    /* lugar */
+    .cel-lugar {
+      text-align: center;
+      font-size: 5vw;
+      font-weight: 900;
+      color: #000;
+      line-height: 1;
+    }
+
+    .sin-datos {
+      font-size: 3vw;
+      font-weight: 900;
+      color: #000;
+      text-align: center;
+    }
+
+    #btn-regresar {
+      position: fixed;
+      bottom: 2vh;
+      right: 2vw;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6vh 1.4vw;
+      font-size: 0.9vw;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      z-index: 999;
+      transition: background 0.2s;
+    }
+    #btn-regresar:hover { background: rgba(0,0,0,0.8); }
+  </style>
+</head>
+<body>
+
+  <div id="titulo">TABLA GENERAL</div>
+
+  <div class="fila-header">
+    <div class="col-header">Unidad — Disciplina</div>
+    <div class="col-header">Promedio</div>
+    <div class="col-header">Lugar</div>
+  </div>
+
+  <div id="lista">
+    <div class="sin-datos">Cargando...</div>
+  </div>
+
+  <button id="btn-regresar" onclick="window.close()">← Regresar</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const bloque = params.get('bloque') || null;
+
+    if (bloque) {
+      document.getElementById('titulo').textContent = `TABLA GENERAL — BLOQUE ${bloque}`;
+    }
+
+    async function cargar() {
+      try {
+        const url = '/api/ranking-obs' + (bloque ? `?bloque=${bloque}` : '');
+        const res = await fetch(url);
+        if (!res.ok) { sinDatos('Sin resultados disponibles'); return; }
+        const grupos = await res.json();
+        if (!grupos || grupos.length === 0) { sinDatos('Sin grupos con evaluaciones en este bloque'); return; }
+        renderTabla(grupos);
+      } catch(e) {
+        sinDatos('Error de conexión');
+      }
+    }
+
+    function renderTabla(grupos) {
+      const lista = document.getElementById('lista');
+      lista.innerHTML = '';
+      grupos.forEach((g, i) => {
+        const fila = document.createElement('div');
+        fila.className = 'fila-dato';
+        const nombre = `${g.unidad || '—'} — ${g.disciplina || '—'}${g.nombre_grupo ? ' · ' + g.nombre_grupo : ''}`;
+        const promedio = g.calificacion_final != null ? Number(g.calificacion_final).toFixed(2) : '—';
+        fila.innerHTML = `
+          <div class="cel-nombre">${nombre}</div>
+          <div class="cel-promedio">${promedio}</div>
+          <div class="cel-lugar">${i + 1}</div>
+        `;
+        lista.appendChild(fila);
+      });
+    }
+
+    function sinDatos(texto) {
+      document.getElementById('lista').innerHTML = `<div class="sin-datos">${texto}</div>`;
+    }
+
+    cargar();
+    setInterval(cargar, 6000);
+  </script>
+</body>
+</html>

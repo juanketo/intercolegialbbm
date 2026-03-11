@@ -1,0 +1,12 @@
+[
+  { "id": "c1",  "nombre": "Técnica Corporal" },
+  { "id": "c2",  "nombre": "Precisión Rítmica" },
+  { "id": "c3",  "nombre": "Expresión Facial y Conexión" },
+  { "id": "c4",  "nombre": "Uso del Espacio" },
+  { "id": "c5",  "nombre": "Fluidez y Control" },
+  { "id": "c6",  "nombre": "Proyección Escénica" },
+  { "id": "c7",  "nombre": "Interpretación Artística" },
+  { "id": "c8",  "nombre": "Dificultad de la Coreografía" },
+  { "id": "c9",  "nombre": "Limpieza de Ejecución" },
+  { "id": "c10", "nombre": "Imagen y Estética" }
+]

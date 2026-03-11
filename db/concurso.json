@@ -1,0 +1,51 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "username": "juez1",
+      "password": "juez1",
+      "rol": "juez"
+    },
+    {
+      "id": 2,
+      "username": "juez2",
+      "password": "juez2",
+      "rol": "juez"
+    },
+    {
+      "id": 3,
+      "username": "juez3",
+      "password": "juez3",
+      "rol": "juez"
+    },
+    {
+      "id": 4,
+      "username": "admin",
+      "password": "admin",
+      "rol": "admin"
+    }
+  ],
+  "grupos": [
+    {
+      "id": 3,
+      "bloque": 1,
+      "unidad": "Del Valle Norte",
+      "nivel": "Baby",
+      "disciplina": "Yoga Hip-Hop Funk",
+      "participantes": 4,
+      "nombre_grupo": "esmeralda pro"
+    },
+    {
+      "id": 4,
+      "bloque": 1,
+      "unidad": "El Refugio",
+      "nivel": "Baby",
+      "disciplina": "Mexidanza",
+      "participantes": 6,
+      "nombre_grupo": "los coapitas"
+    }
+  ],
+  "evaluaciones": [],
+  "_nextGrupoId": 5,
+  "_nextEvalId": 7
+}

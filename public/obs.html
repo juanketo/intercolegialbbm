@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OBS — Pantalla Resultados</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #00FF00;
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #contenido {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 0 4vw;
+    }
+
+    .fila-encabezados {
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      gap: 2vw;
+      margin-bottom: 8vh;
+    }
+
+    .encabezado {
+      text-align: center;
+      font-size: 2.4vw;
+      font-weight: 900;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 0.15vw;
+    }
+
+    .fila-calificaciones {
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      margin-bottom: 7vh;
+      gap: 4.4vw;
+    }
+
+    .calificacion {
+      text-align: center;
+      font-size: 5vw;
+      font-weight: 900;
+      color: #000;
+      line-height: 1;
+      padding: 1vh 0;
+    }
+
+    .info-grupo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7vh;
+      width: 100%;
+    }
+
+    .info-item {
+      font-size: 2.9vw;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.3vw;
+    }
+
+    .sin-datos {
+      font-size: 3vw;
+      font-weight: 900;
+      color: #000;
+      text-align: center;
+    }
+
+    #btn-regresar {
+      position: fixed;
+      bottom: 2vh;
+      right: 2vw;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6vh 1.4vw;
+      font-size: 0.9vw;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      z-index: 999;
+      transition: background 0.2s;
+    }
+    #btn-regresar:hover { background: rgba(0,0,0,0.8); }
+  </style>
+</head>
+<body>
+  <div id="contenido">
+    <div class="sin-datos">Cargando...</div>
+  </div>
+
+  <button id="btn-regresar" onclick="window.close()">← Regresar</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const grupoId = params.get('grupo_id') ? parseInt(params.get('grupo_id')) : null;
+
+    async function cargarResultados() {
+      try {
+        const res = await fetch('/api/ranking-obs');
+        if (!res.ok) { renderSinDatos('Sin resultados disponibles'); return; }
+        const grupos = await res.json();
+
+        if (grupoId !== null) {
+          const grupo = grupos.find(g => g.id === grupoId);
+          if (grupo) { renderGrupo(grupo); return; }
+          try {
+            const gRes = await fetch('/api/grupos-obs/' + grupoId);
+            if (gRes.ok) { renderGrupoSinCalif(await gRes.json()); return; }
+          } catch(_) {}
+          renderSinDatos('Grupo sin evaluaciones aún');
+          return;
+        }
+
+        if (!grupos || grupos.length === 0) { renderSinDatos('Sin resultados disponibles'); return; }
+        renderGrupo(grupos[0]);
+      } catch (e) {
+        renderSinDatos('Error de conexión');
+      }
+    }
+
+    function renderGrupo(g) {
+      const jueces = ['juez1', 'juez2', 'juez3'];
+      const vals = jueces.map(j => g.jueces && g.jueces[j] != null ? Number(g.jueces[j]).toFixed(2) : '—');
+      const promedio = g.calificacion_final != null ? Number(g.calificacion_final).toFixed(2) : '—';
+      document.getElementById('contenido').innerHTML = `
+        <div class="fila-encabezados">
+          <div class="encabezado">Juez 1</div>
+          <div class="encabezado">Juez 2</div>
+          <div class="encabezado">Juez 3</div>
+          <div class="encabezado">Promedio</div>
+        </div>
+        <div class="fila-calificaciones">
+          <div class="calificacion">${vals[0]}</div>
+          <div class="calificacion">${vals[1]}</div>
+          <div class="calificacion">${vals[2]}</div>
+          <div class="calificacion">${promedio}</div>
+        </div>
+        <div class="info-grupo">
+          <div class="info-item">${g.unidad || '—'}</div>
+          <div class="info-item">${g.disciplina || '—'}</div>
+          <div class="info-item">${g.nombre_grupo || g.nivel || '—'}</div>
+        </div>`;
+    }
+
+    function renderGrupoSinCalif(g) {
+      document.getElementById('contenido').innerHTML = `
+        <div class="fila-encabezados">
+          <div class="encabezado">Juez 1</div>
+          <div class="encabezado">Juez 2</div>
+          <div class="encabezado">Juez 3</div>
+          <div class="encabezado">Promedio</div>
+        </div>
+        <div class="fila-calificaciones">
+          <div class="calificacion">—</div>
+          <div class="calificacion">—</div>
+          <div class="calificacion">—</div>
+          <div class="calificacion">—</div>
+        </div>
+        <div class="info-grupo">
+          <div class="info-item">${g.unidad || '—'}</div>
+          <div class="info-item">${g.disciplina || '—'}</div>
+          <div class="info-item">${g.nombre_grupo || g.nivel || '—'}</div>
+        </div>`;
+    }
+
+    function renderSinDatos(texto) {
+      document.getElementById('contenido').innerHTML = `<div class="sin-datos">${texto}</div>`;
+    }
+
+    cargarResultados();
+    setInterval(cargarResultados, 5000);
+  </script>
+</body>
+</html>

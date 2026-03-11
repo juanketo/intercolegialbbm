@@ -1,0 +1,10 @@
+[
+  { "bloque": 1, "unidad": "Coapa",         "nivel": "Baby",      "disciplina": "Ballet",        "participantes": 6 },
+  { "bloque": 1, "unidad": "Satélite",      "nivel": "Kids",      "disciplina": "Hip Hop",       "participantes": 8 },
+  { "bloque": 2, "unidad": "Lindavista",    "nivel": "Mini",      "disciplina": "Jazz",          "participantes": 5 },
+  { "bloque": 2, "unidad": "Del Valle Sur", "nivel": "Primary 1", "disciplina": "Flamenco",      "participantes": 7 },
+  { "bloque": 3, "unidad": "Coyoacán MAQ",  "nivel": "Primary 2", "disciplina": "Danza Árabe",   "participantes": 6 },
+  { "bloque": 3, "unidad": "Aragón",        "nivel": "Baby",      "disciplina": "Ritmos Latinos","participantes": 9 },
+  { "bloque": 4, "unidad": "Xochimilco",    "nivel": "Kids",      "disciplina": "Mexidanza",     "participantes": 7 },
+  { "bloque": 4, "unidad": "Iztapalapa",    "nivel": "Primary 1", "disciplina": "Break Dance",   "participantes": 5 }
+]

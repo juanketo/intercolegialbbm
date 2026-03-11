@@ -1,0 +1,5 @@
+Coloca aquí tu archivo de logo con el nombre exacto:
+  logo.png
+
+El archivo logplastilinainter.png que tienes, renómbralo a logo.png
+y colócalo en esta carpeta: public/img/logo.png
