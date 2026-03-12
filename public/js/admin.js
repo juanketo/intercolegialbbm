@@ -107,7 +107,7 @@ const Admin = (() => {
     campoBloq.className = 'campo';
     campoBloq.innerHTML = '<label for="inp-bloque">Número de Bloque</label>';
     const inpBloq = document.createElement('input');
-    inpBloq.type = 'number'; inpBloq.id = 'inp-bloque'; inpBloq.min = '1'; inpBloq.placeholder = 'Ej: 1';
+    inpBloq.type = 'text'; inpBloq.id = 'inp-bloque'; inpBloq.placeholder = 'Ej: Bloque Mini ballet';
     campoBloq.appendChild(inpBloq);
     form.appendChild(campoBloq);
     form.appendChild(UI.sel('sel-unidad',     'Unidad',       datos.unidades));
@@ -134,13 +134,13 @@ const Admin = (() => {
     acc.className = 'acc';
     acc.style.marginTop = '8px';
     acc.appendChild(UI.btn(`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg> Registrar Grupo`, '', async () => {
-      const bloque      = parseInt(document.getElementById('inp-bloque').value);
+      const bloque      = document.getElementById('inp-bloque').value.trim();
       const unidad      = document.getElementById('sel-unidad').value;
       const nivel       = document.getElementById('sel-nivel').value;
       const disciplina  = document.getElementById('sel-disciplina').value;
       const participantes = parseInt(document.getElementById('inp-part').value);
       const nombre_grupo  = document.getElementById('inp-nombre-grupo').value.trim();
-      if (!bloque || bloque < 1 || !unidad || !nivel || !disciplina || !participantes || participantes < 1) {
+      if (!bloque || !unidad || !nivel || !disciplina || !participantes || participantes < 1) {
         UI.msg('Completa todos los campos correctamente.', 'error'); return;
       }
       try {

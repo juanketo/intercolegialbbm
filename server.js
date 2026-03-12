@@ -56,7 +56,7 @@ app.get('/api/me', (req, res) => {
 // ── GRUPOS ────────────────────────────────────────────────────
 app.get('/api/bloques', requireAuth, (req, res) => {
   const grupos = db.get('grupos').value();
-  const bloques = [...new Set(grupos.map(g => g.bloque))].sort((a, b) => a - b);
+  const bloques = [...new Set(grupos.map(g => g.bloque))].sort((a, b) => String(a).localeCompare(String(b)));
   res.json(bloques);
 });
 
@@ -81,7 +81,7 @@ app.post('/api/grupos', requireAdmin, (req, res) => {
   const id = db.get('_nextGrupoId').value();
   db.set('_nextGrupoId', id + 1).write();
 
-  const grupo = { id, bloque: parseInt(bloque), unidad, nivel, disciplina, participantes: parseInt(participantes), nombre_grupo: nombre_grupo || '' };
+  const grupo = { id, bloque: bloque, unidad, nivel, disciplina, participantes: parseInt(participantes), nombre_grupo: nombre_grupo || '' };
   db.get('grupos').push(grupo).write();
   res.json({ ok: true, id });
 });
