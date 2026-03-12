@@ -1,13 +1,14 @@
-// db/init.js — Base de datos usando lowdb (JSON file, puro JavaScript)
 const low  = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'concurso.json');
+const DB_PATH = process.env.NODE_ENV === 'production'
+  ? path.join('/tmp', 'concurso.json')
+  : path.join(__dirname, 'concurso.json');
+
 const adapter = new FileSync(DB_PATH);
 const db = low(adapter);
 
-// Estructura inicial
 db.defaults({
   usuarios: [
     { id: 1, username: 'juez1', password: 'juez1', rol: 'juez' },
