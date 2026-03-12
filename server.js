@@ -185,8 +185,8 @@ app.get('/api/ranking-obs', (req, res) => {
 const DATOS = {
   unidades: [
     "Unidad Aragón", "Unidad Balbuena", "Unidad Coapa", "Unidad Cuernavaca", "Unidad Del Valle Norte", "Unidad División del Norte",
-    "Unidad Lomas Estrella", "Unidad Mundo E", "Unidad Neza 1 las Golondrinas", "Unidad Ojo de Agua", "Unidad Pasaje Ferrería",
-    "Unidad San Bernabé", "Unidad San Pedro de los Pinos*", "Unidad Satélite", "Unidad Texcoco"
+    "Unidad Hueso", "Unidad Lomas Estrella", "Unidad Mundo E", "Unidad Neza 1 las Golondrinas", "Unidad Ojo de Agua",
+    "Unidad Pasaje Ferrería", "Unidad San Bernabé", "Unidad San Pedro de los Pinos*", "Unidad Satélite", "Unidad Texcoco"
   ],
   niveles: ["Baby","Kids","Primary 1","Primary 2"],
   disciplinas: [
