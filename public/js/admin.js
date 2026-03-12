@@ -33,7 +33,6 @@ const Admin = (() => {
         const sec = document.createElement('div');
         sec.className = 'sec';
 
-        // Header bloque con botón ranking
         const hdr = document.createElement('div');
         hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid;border-image:linear-gradient(90deg,var(--accent),var(--lila)) 1';
         hdr.innerHTML = `<h2 style="border:none;margin:0;padding:0">Bloque ${b}</h2>`;
@@ -146,7 +145,7 @@ const Admin = (() => {
       }
       try {
         await Api.crearGrupo({ bloque, unidad, nivel, disciplina, participantes, nombre_grupo });
-        UI.msg('✅ Grupo registrado correctamente.');
+        UI.msg('Grupo registrado correctamente.');
         verPanel();
       } catch (e) { UI.msg(e.message, 'error'); }
     }));
@@ -166,8 +165,7 @@ const Admin = (() => {
 
       const sec = document.createElement('div');
       sec.className = 'sec';
-      sec.appendChild(UI.h2(bloque ? `🏅 Ranking — Bloque ${bloque}` : '🏆 Ranking General'));
-      // Botones de bloque rápido si estamos en general
+      sec.appendChild(UI.h2(bloque ? ` Ranking — Bloque ${bloque}` : ' Ranking General'));
       const acc = document.createElement('div');
       acc.className = 'acc';
       if (bloque) acc.appendChild(UI.btn(`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Todos los bloques`, 'btn-sec', () => verRanking(null)));
@@ -186,7 +184,6 @@ const Admin = (() => {
       scroll.className = 'tabla-scroll';
       const tabla = document.createElement('table');
       tabla.className = 'tabla-ranking';
-      // Encabezados: Pos · Unidad · Disciplina · Bloque · J1 · J2 · J3 · Final
       tabla.innerHTML = `
         <thead>
           <tr>
@@ -247,7 +244,6 @@ const Admin = (() => {
     const grupo = await Api.grupo(grupoId);
     const jueces = ['juez1','juez2','juez3'];
 
-    // ── Construye estructura una sola vez ──
     main.innerHTML = '';
 
     const secHdr = document.createElement('div');
@@ -275,11 +271,12 @@ const Admin = (() => {
     secHdr.appendChild(hdrRow);
     main.appendChild(secHdr);
 
-    // Cards de estado por juez
+    // Cards de estado por juez + card final
     const secCards = document.createElement('div');
     secCards.className = 'sec';
     const cardsRow = document.createElement('div');
     cardsRow.className = 'eval-grid';
+
     jueces.forEach(j => {
       const card = document.createElement('div');
       card.className = 'eval-juez-card pend';
@@ -290,6 +287,17 @@ const Admin = (() => {
       `;
       cardsRow.appendChild(card);
     });
+
+    // ── CARD PROMEDIO FINAL (nueva) ──
+    const cardFinal = document.createElement('div');
+    cardFinal.className = 'eval-juez-card pend';
+    cardFinal.dataset.cardJuez = `${grupoId}-final`;
+    cardFinal.innerHTML = `
+      <div class="ej-name" style="color:var(--lila);font-weight:800">FINAL</div>
+      <div class="ej-score pend sv-card-final" data-grupo="${grupoId}">—</div>
+    `;
+    cardsRow.appendChild(cardFinal);
+
     secCards.appendChild(cardsRow);
     main.appendChild(secCards);
 
@@ -334,18 +342,16 @@ const Admin = (() => {
     secTabla.appendChild(scroll);
     main.appendChild(secTabla);
 
-    // ── Función que solo actualiza los valores en el DOM ──
+    // ── Función tick: actualiza DOM en vivo ──
     async function tick() {
       try {
         const evs = await Api.evaluaciones(grupoId);
         jueces.forEach(j => {
           const ev = evs.find(e => e.juez === j);
 
-          // Punto color header tabla
           const dot = document.querySelector(`.sv-dot[data-grupo="${grupoId}"][data-juez="${j}"]`);
           if (dot) dot.style.background = ev ? '#2ecc71' : '#e74c3c';
 
-          // Card estado
           const cardScore = document.querySelector(`.sv-card-score[data-grupo="${grupoId}"][data-juez="${j}"]`);
           const card = document.querySelector(`[data-card-juez="${grupoId}-${j}"]`);
           if (cardScore && card) {
@@ -360,7 +366,6 @@ const Admin = (() => {
             }
           }
 
-          // Valores criterios
           datos.criterios.forEach(c => {
             const el = document.querySelector(`.sv-val[data-grupo="${grupoId}"][data-juez="${j}"][data-criterio="${c.id}"]`);
             if (!el) return;
@@ -375,17 +380,34 @@ const Admin = (() => {
             }
           });
 
-          // Promedio
           const promEl = document.querySelector(`.sv-prom[data-grupo="${grupoId}"][data-juez="${j}"]`);
           if (promEl) {
             if (ev) { promEl.textContent = ev.promedio.toFixed(2); promEl.classList.remove('pend'); }
             else { promEl.textContent = '—'; promEl.classList.add('pend'); }
           }
         });
+
+        // ── PROMEDIO FINAL (nuevo) ──
+        const evsValidos = evs.filter(e => jueces.includes(e.juez));
+        const cardFinalEl = document.querySelector(`.sv-card-final[data-grupo="${grupoId}"]`);
+        const cardFinalCard = document.querySelector(`[data-card-juez="${grupoId}-final"]`);
+        if (cardFinalEl && cardFinalCard) {
+          if (evsValidos.length > 0) {
+            const pf = +(evsValidos.reduce((a, e) => a + e.promedio, 0) / evsValidos.length).toFixed(2);
+            cardFinalEl.textContent = pf.toFixed(2);
+            cardFinalEl.classList.remove('pend');
+            cardFinalCard.classList.remove('pend');
+          } else {
+            cardFinalEl.textContent = '—';
+            cardFinalEl.classList.add('pend');
+            cardFinalCard.classList.add('pend');
+          }
+        }
+
       } catch(e) { /* silencioso */ }
     }
 
-    await tick(); // carga inicial
+    await tick();
     window._supervisarIntervalo = setInterval(tick, 2000);
   }
 

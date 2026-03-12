@@ -158,7 +158,7 @@ app.get('/api/ranking', requireAuth, (req, res) => {
   res.json(resultado);
 });
 
-// Endpoint público para la pantalla OBS (sin auth requerida)
+
 app.get('/api/ranking-obs', (req, res) => {
   const { bloque } = req.query;
   let grupos = db.get('grupos').value();
@@ -184,21 +184,14 @@ app.get('/api/ranking-obs', (req, res) => {
 // ── DATOS ESTÁTICOS ───────────────────────────────────────────
 const DATOS = {
   unidades: [
-    "Aragón","Balbuena","Camarones","Centro Sur","Chile Ñuñoa","Coapa",
-    "Coyoacán MAQ","Cuernavaca","Cumbres Mty","Del Valle Norte","Del Valle Sur",
-    "División del Norte","El Refugio","Esmeralda","Hueso","Izcalli","Iztapalapa",
-    "Lerma","Lindavista","Lomas Estrella","Lomas Verdes","Metepec","Mundo E",
-    "Neza Golondrinas","Ojo de Agua","Pasaje Ferrería","Playa del Carmen",
-    "Plaza Cascada","Plaza Q Hgo","Plaza Santín","Real de Minas Hgo","San Bernabé",
-    "San Pedro de los Pinos","Satélite","Tepepan","Tepeyac","Texcoco","Xochimilco",
-    "Zacatecas","Zapopan Jardín Real","Zapopan Solares","Zinacantepec"
+    "Unidad Aragón", "Unidad Balbuena", "Unidad Coapa", "Unidad Cuernavaca", "Unidad Del Valle Norte", "Unidad División del Norte",
+    "Unidad Lomas Estrella", "Unidad Mundo E", "Unidad Neza 1 las Golondrinas", "Unidad Ojo de Agua", "Unidad Pasaje Ferrería",
+    "Unidad San Bernabé", "Unidad San Pedro de los Pinos*", "Unidad Satélite", "Unidad Texcoco"
   ],
-  niveles: ["Mini","Baby","Kids","Primary 1","Primary 2"],
+  niveles: ["Baby","Kids","Primary 1","Primary 2"],
   disciplinas: [
-    "Ballet","Hip Hop","Danzas Polinesias","Jazz","Danza Árabe","Ritmos Latinos",
-    "Flamenco","Mexidanza","Cheer Poms","Gimnasia Rítmica","Tae Kwon Do",
-    "Danza Aérea","Capoeira","Yoga Hip-Hop Funk","Break Dance","Electronic Dance",
-    "Danza Clásica","Shark Kids Dancer"
+    "Ballet", "Hip Hop", "Danzas Polinesias", "Jazz", "Danza Árabe", "Ritmos Latinos", "Gimnasia Rítmica",
+    "Danza Aérea con tela","Danza Aérea con aro", "Danza Aérea contela y aro", "Contemporáneo", "Brodway dance", "k-Pop"
   ],
   criterios: [
     { id:"c1",  nombre:"Técnica Corporal" },
